@@ -1,41 +1,59 @@
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
-import { Todo } from './entity/todo.entity';
+import { Body, Controller, Delete, Get, HttpStatus, NotFoundException, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { getPaginatedDto } from './dto/get-paginated.dto';
+import { AddTodoDto } from './dto/add-Todo.dto';
+import { TodoService } from './todo.service';
+import { STATUS_CODES } from 'http';
+import { UpperCaseAndFusionPipe } from 'src/pipes/upper-case-and-fusion/upper-case-and-fusion.pipe';
 @Controller('todo')
 export class TodoController {
-    constructor(){
-        this.todos = [] // tableau vide 
+    constructor(private todoService : TodoService){
     }
-    todos : Todo[]; // todos reçoit le tableau de Todo
+
+
     @Get()
     getTodo(
+        @Query() myQueryParams : getPaginatedDto,
     ){
-        return this.todos
-        
+        return this.todoService.getAlltodo();
     }
+
+    @Get('/ :id')
+    getTodoById(
+        @Param('id')  id : number
+    ){
+        return this.todoService.getTodoViaId(+id)
+    }
+
     @Post()
-    aDDTodo(
-        @Body() newTodo: Todo // reponse du body
+    aDDTodo(@Body() newTodo : AddTodoDto){
+        return this.todoService.AddTodo(newTodo)
+    }
 
+    @Delete(':id')
+    deleteTodo(
+        @Param('id', new ParseIntPipe({
+            errorHttpStatusCode: HttpStatus.NOT_FOUND
+        })) id ,
     ){
         
-        if(this.todos.length){ // si la longeur du tableau de todo est > 0 
-           newTodo.id = this.todos[this.todos.length -1].id + 1;// on recupere l'id du derniere element d todo et on ajoute 1 pour l'element suivante
-        } else {
-            newTodo.id = 1;
-        }
-        this.todos.push(newTodo) // pour ajouter le new todo dans le tableau de todos
-        return newTodo
+       console.log(typeof id);  
+       return this.todoService.eraseTodo(id)
     }
-    @Delete()
-    deleteTodo(){
-        console.log('Suprimer un TODO dans la liste de Todo');
-        return 'Delete des TODO'
-        
-    }
-    @Put()
-    modifyTodo(){
-        console.log('modifier un TODO dans la liste de Todo');
-        return 'UPdate TODO'
 
+
+    @Put(':id')
+    modifyTodo(
+        @Param('id') id,
+        @Body() newTodo : Partial<AddTodoDto>
+    ){  
+       
+        return this.todoService.UpdDateTodo(+id, newTodo);
+    }
+    @Post('pipe')
+    testPipe(
+        @Param('data', UpperCaseAndFusionPipe) paramDate,
+        @Body() Data,
+    ){
+            return Data
     }
 }

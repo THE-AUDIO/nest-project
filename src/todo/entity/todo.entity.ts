@@ -1,5 +1,6 @@
 export class Todo{
     id: number;
     name: string;
-    description : string
+    description : string;
+    status: string;
 }
