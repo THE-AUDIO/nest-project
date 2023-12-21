@@ -12,12 +12,11 @@ export class TodoController {
 
     @Get()
     getTodo(
-        @Query() myQueryParams : getPaginatedDto,
     ){
         return this.todoService.getAlltodo();
     }
 
-    @Get('/ :id')
+    @Get('/:id')
     getTodoById(
         @Param('id')  id : number
     ){
@@ -36,7 +35,6 @@ export class TodoController {
         })) id ,
     ){
         
-       console.log(typeof id);  
        return this.todoService.eraseTodo(id)
     }
 
