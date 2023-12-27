@@ -5,9 +5,9 @@ export class timeStampEntity{
         update: false
     })
     createAt: Date
-  
+    
     @UpdateDateColumn()
-    updateAt: Date;
+    updateAt: Date; 
   
     @DeleteDateColumn({
             update: false

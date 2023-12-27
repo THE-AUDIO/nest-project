@@ -10,6 +10,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CvModule } from './cv/cv.module';
 import * as dotenv from 'dotenv'
 import { myEntity } from './cv/entities/entity/cv.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'node:path';
 dotenv.config()
 @Module({
   imports: [
@@ -19,13 +21,16 @@ dotenv.config()
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST ,
+      host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [myEntity],
       synchronize: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads')
     }),
     CvModule
   ],

@@ -3,8 +3,8 @@ import { Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
 export class myEntity extends timeStampEntity{
-   @PrimaryGeneratedColumn()
-   id:number;
+  @PrimaryGeneratedColumn()
+  id:number;
 
   @Column()
   firstName: string;
@@ -17,5 +17,8 @@ export class myEntity extends timeStampEntity{
 
   @Column()
   job: string;
+  
+  @Column()
+  path: string; 
   
 }
