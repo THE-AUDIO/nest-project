@@ -9,6 +9,19 @@ export class CvController {
     constructor(private cvService: CvService) {
         
     }
+    @Get('stats')
+    async stateCvNumberByAge(){
+        return  await this.cvService.CvNumberByAge()
+    }
+
+    @Patch()
+    async UpdateCv2(
+    @Body() updateObject
+    ){
+         const {updateCriteria, updateCvDto} =  updateObject 
+        return this.cvService.updateCv2(updateCriteria, updateCvDto)
+    }
+
     @Get()
     async getAll(): Promise<myEntity[]>{
         return this.cvService.getcvs()
@@ -20,6 +33,18 @@ export class CvController {
     ){
         return this.cvService.AddcV(addcvDto)
     }
+
+    @Get('recover/:id')
+    async restore(@Param('id',ParseIntPipe) id: number) {
+
+        return await this.cvService.restorecv(id);;
+    }
+
+    @Get(':id')
+    async findCvById(@Param('id',ParseIntPipe) id) {
+        return await this.cvService.findById(id);
+    }
+
     @Patch(':id')
     async UpdateCv(
     @Body() updatecvDto : UpdateCvDto,
@@ -27,23 +52,12 @@ export class CvController {
     ){
         return this.cvService.updatecV(id, updatecvDto)
     }
-    @Patch()
-    async UpdateCv2(
-    @Body() updateObject
-    ){
-         const {updateCriteria, updateCvDto} =  updateObject 
-        return this.cvService.updateCv2(updateCriteria, updateCvDto)
-    }
+
     @Delete(':id')
     async removeCv(
         @Param('id', ParseIntPipe) id : number
     ){
 
-        return this.cvService.deeleteCv(id)
-    }
-
-    @Get(':id')
-    async findCvById(@Param('id') id: number) {
-        return await this.cvService.findById(id);
-    }
+        return await  this.cvService.softRemoveCv(id)
+    } 
 }

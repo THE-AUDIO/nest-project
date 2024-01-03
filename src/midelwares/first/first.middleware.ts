@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 export class FirstMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: () => void) {
 
-    console.log('je suis un premier midelware');
+    // console.log('je suis un premier midelware');
     
     next();
   }
