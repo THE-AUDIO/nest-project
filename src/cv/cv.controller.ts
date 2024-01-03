@@ -12,6 +12,7 @@ export class CvController {
     @Get('stats')
     async stateCvNumberByAge(){
         return  await this.cvService.CvNumberByAge()
+        // return  await this.cvService.CvNumberByAge(58,22)
     }
 
     @Patch()

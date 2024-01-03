@@ -12,6 +12,8 @@ import * as dotenv from 'dotenv'
 import { myEntity } from './cv/entities/entity/cv.entity';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'node:path';
+import { UserModule } from './user/user.module';
+import { UserEntity } from './user/entites/user.entity/user.entity';
 dotenv.config()
 @Module({
   imports: [
@@ -26,13 +28,14 @@ dotenv.config()
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [myEntity],
+      entities: [myEntity, UserEntity],
       synchronize: true,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads')
     }),
-    CvModule
+    CvModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

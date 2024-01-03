@@ -1,5 +1,6 @@
 import { timeStampEntity } from "src/generics/timeStam.entity";
-import { Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import { UserEntity } from "src/user/entites/user.entity/user.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
 export class myEntity extends timeStampEntity{
@@ -21,4 +22,9 @@ export class myEntity extends timeStampEntity{
   @Column()
   path: string; 
   
+  @ManyToOne(
+    type => UserEntity,
+    (user) => user.cvs,
+  )
+  user: UserEntity;
 }
