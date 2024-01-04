@@ -1,4 +1,6 @@
+import { IsNotEmpty } from "class-validator";
 import { myEntity } from "src/cv/entities/entity/cv.entity";
+import { UserRoleEnum } from "src/enums/user_Role.enum";
 import { timeStampEntity } from "src/generics/timeStam.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -17,6 +19,21 @@ export class UserEntity extends timeStampEntity{
         length:50
     })
     email: string;
+
+    @Column()
+    password: string;
+
+    @Column()
+    salt: string;
+
+    @IsNotEmpty()
+    @Column({
+        type: 'enum',
+        enum: UserRoleEnum,
+        default: UserRoleEnum.USER
+    })
+    role: string;
+
     @OneToMany(
         type => myEntity,
         (cvs) => cvs.user
