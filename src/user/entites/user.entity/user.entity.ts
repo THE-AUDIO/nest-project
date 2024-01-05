@@ -1,7 +1,7 @@
 import { IsNotEmpty } from "class-validator";
 import { myEntity } from "src/cv/entities/entity/cv.entity";
-import { UserRoleEnum } from "src/enums/user_Role.enum";
-import { timeStampEntity } from "src/generics/timeStam.entity";
+import { UserRoleEnum } from "src/enums/user-role.enum";
+import { timeStampEntity } from "src/generics/timestamp.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('user')
