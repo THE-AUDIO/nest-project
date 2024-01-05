@@ -23,8 +23,11 @@ export class CvService {
         return await this.cvRepository.findOneBy({id});    
     }
 
-    async AddcV(cv:AddCvDto): Promise<myEntity>{
-        return await this.cvRepository.save(cv);
+    async AddcV(cv:AddCvDto, user: any): Promise<myEntity>{
+        console.log(user);
+        const newCv = this.cvRepository.create(cv);        
+        // newCv.user = user       
+        return await this.cvRepository.save({...newCv, user});
     } 
     async updatecV(id:number, cv:UpdateCvDto): Promise<myEntity>{
         // recuperation du cv avec id passer en parametre
