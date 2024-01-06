@@ -63,6 +63,7 @@ export class UserService {
             const payload = {
                 userName: username,
                 email: user.email,
+                id: user.id,
                 role: user.role
             } 
             const jwt = await this.jwtService.sign(payload)

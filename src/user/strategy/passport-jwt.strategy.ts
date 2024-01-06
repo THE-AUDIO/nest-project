@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPayload } from '../interfaces/payload.interface';
-import { FindOneOptions, Repository } from 'typeorm';
+import {  Repository } from 'typeorm';
 import { UserEntity } from '../entites/user.entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -18,24 +18,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get('SECRET_KEY'),
+      secretOrKey: process.env.JWT_SECRET_KEY
     });
   }
 
   async validate(payload: IPayload) {
-    // j'ai recuperer mon user
-    // const user = await this.userRepository.findOne({where:{username: payload.username}} as FindOneOptions<UserEntity>)    
-    const user = await this.userRepository.findOneBy({userName: payload.userName});   
-    // // si le user existe je le retourne
-    // if(user){
-    //   delete user.salt,
-    //   delete user.password
-    //   return user
-    // } else{
-    //   throw new UnauthorizedException()
-    // }
+    const user = await this.userRepository.findOneBy({userName: payload.userName}); 
+    return user;
 
-    //si non je dechlence une erreur 
-    return payload;
   }
 }

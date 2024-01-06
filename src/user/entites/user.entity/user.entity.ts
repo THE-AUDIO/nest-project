@@ -36,7 +36,12 @@ export class UserEntity extends timeStampEntity{
 
     @OneToMany(
         type => myEntity,
-        (cvs) => cvs.user
+        (cvs) => cvs.user,
+        {
+            cascade: true,
+            nullable: true,
+            eager: true
+          }
     )
     cvs: myEntity[];    
 }

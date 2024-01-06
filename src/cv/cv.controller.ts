@@ -4,6 +4,7 @@ import { myEntity } from './entities/entity/cv.entity';
 import { AddCvDto } from './dto/add-cv.dto';
 import { UpdateCvDto } from './dto/updateCv.dto';
 import { JwtAuthGuard } from 'src/user/guards/jwt.authguard';
+import { User } from 'src/decorator/user.decorator';
 
 @Controller('cv')
 export class CvController {
@@ -28,17 +29,19 @@ export class CvController {
 
     @Get()
     @UseGuards(JwtAuthGuard)
-    async getAll(): Promise<myEntity[]>{
-        return this.cvService.getcvs()
+    async getAll(
+        @User() user,
+    ) {
+        // console.log(user)                                                                
+        return this.cvService.getcvs(user)
     }
 
     @Post()
     @UseGuards(JwtAuthGuard)
     async AddCv(
     @Body() addcvDto : AddCvDto,
-    @Request() req : any
-    ){  
-        const user = req.user;
+    @User() user
+    ){      
         return this.cvService.AddcV(addcvDto, user)
     }
 
@@ -52,8 +55,11 @@ export class CvController {
 
     @Get(':id')
     @UseGuards(JwtAuthGuard)
-    async findCvById(@Param('id',ParseIntPipe) id) {
-        return await this.cvService.findById(id);
+    async findCvById(
+        @Param('id',ParseIntPipe) id,
+        @User() user
+        ) {
+        return await this.cvService.findCvById(id, user);
     }
 
     @Patch(':id')
@@ -68,9 +74,10 @@ export class CvController {
     @Delete(':id')
     @UseGuards(JwtAuthGuard)
     async removeCv(
-        @Param('id', ParseIntPipe) id : number
+        @Param('id', ParseIntPipe) id : number,
+        @User() user
     ){
 
-        return await  this.cvService.softRemoveCv(id)
+        return await  this.cvService.softRemoveCv(user,id)
     } 
 }

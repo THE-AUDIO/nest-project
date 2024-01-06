@@ -25,6 +25,11 @@ export class myEntity extends timeStampEntity{
   @ManyToOne(
     type => UserEntity,
     (user) => user.cvs,
+    {
+      cascade: ['insert','update'],
+      nullable: true,
+      eager: false
+    }
   )
   user: UserEntity;
 }

@@ -16,7 +16,7 @@ dotenv.config()
       defaultStrategy: 'jwt',
     }),
     JwtModule.register({
-        secret : process.env.SECRET_KEY,
+        secret : process.env.JWT_SECRET_KEY,
         signOptions: {
             expiresIn: 3600
         }
