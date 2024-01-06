@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { CvController } from './cv.controller';
 import { CvService } from './cv.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { myEntity } from './entities/entity/cv.entity';
+import { Resume, User } from 'src/entities';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([myEntity])],
+  imports:[TypeOrmModule.forFeature([Resume, User])],
   controllers: [CvController],
   providers: [CvService]
 })

@@ -1,27 +1,26 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './entites/user.entity/user.entity';
-import { UserController } from './user.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import * as  dotenv from 'dotenv'
+import { UserService } from './user.service';
+import { UserController } from './user.controller';
 import { JwtStrategy } from './strategy/passport-jwt.strategy';
+import { User } from 'src/entities';
 
-dotenv.config()
 @Module({
   imports:[
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([User]),
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
-    JwtModule.register({
+    JwtModule.registerAsync({
+      useFactory: () => ({
         secret : process.env.JWT_SECRET_KEY,
         signOptions: {
-            expiresIn: 3600
+          algorithm: "HS512"
         }
+      })
     })
-
   ],
   controllers: [UserController],
   providers: [

@@ -1,57 +1,49 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { myEntity } from './entities/entity/cv.entity';
 import { AddCvDto } from './dto/add-cv.dto';
 import { UpdateCvDto } from './dto/updateCv.dto';
 import { UserRoleEnum } from 'src/enums/user-role.enum';
-import { log } from 'console';
+import { Resume } from 'src/entities';
 
 
 @Injectable()
 export class CvService {
     constructor(
-        @InjectRepository(myEntity)
-        private cvRepository: Repository<myEntity>
-    ) { }
+        @InjectRepository(Resume)
+        private cvRepository: Repository<Resume>
+    ) {}
 
     // function asynchrone qui retourne un prommesse d'un tableau d'entity
-    async getcvs(data: any){
-        const user = {userName: data.userName, email: data.email, role: data.role};
-        if(data.role === UserRoleEnum.ADMIN ){
+    async getcvs(data: any): Promise<Resume[]> {
+        if (data.role === UserRoleEnum.ADMIN) {
             return await this.cvRepository.find();
-        } else{
-            return await this.cvRepository.findBy({user: user});
         }
-
+        const user = { userName: data.userName, email: data.email, role: data.role };
+        return await this.cvRepository.findBy({user: user});
     }
 
     // ----------- verify if an cv exist--------------
-    async findCvById(id: number, data: any): Promise<myEntity> {
-        const user = {userName: data.userName, email: data.email, role: data.role, id: data.id};
+    async findCvById(id: number, data: any): Promise<Resume> {
+        const user = { 
+            userName: data.userName, 
+            email: data.email, 
+            role: data.role, 
+            id: data.id 
+        };
 
-        const cv =  await this.cvRepository.findOneBy({user});
-        console.log(user)
-        console.log(cv)
-        if(!cv){
-            throw new NotFoundException('cv not found');
-        } else{
-            if(user.role === UserRoleEnum.ADMIN || cv.user && cv.user.id === user.id){
-                
-                return cv
-            } else{
-                throw new  UnauthorizedException()
-            }
+        if (user.role !== UserRoleEnum.ADMIN) {
+            throw new ForbiddenException("Credentials incorrect...");
         }
+        return await this.cvRepository.findOneBy({user});
     }
 
-    async AddcV(cv: AddCvDto, user: any): Promise<myEntity> {
-        const newCv = this.cvRepository.create(cv); 
-        newCv.user = user     
-        return await this.cvRepository.save( newCv );
+    async AddcV(cv: AddCvDto, user: any): Promise<Resume> {
+        const newCv = this.cvRepository.create(cv);    
+        return await this.cvRepository.save({ ...newCv, user });
         // return await this.cvRepository.save({ ...newCv, user });
     } 
-    async updatecV(id: number, cv: UpdateCvDto): Promise<myEntity> {
+    async updatecV(id: number, cv: UpdateCvDto): Promise<Resume> {
         // recuperation du cv avec id passer en parametre
         // remplacer l'ancien valeur du cv par newCv
         const newCv = await  this.cvRepository.preload({ ...cv, id });
@@ -66,7 +58,7 @@ export class CvService {
 
     // in the var update criteria is a criteria to update de cvDto
     async updateCv2(updateCriteria: any, cv: UpdateCvDto): Promise<void> {
-        await this.cvRepository.update(updateCriteria, cv)
+        await this.cvRepository.update(updateCriteria, cv);
     }
 
     async removeCv(id: number): Promise<void> {
@@ -81,7 +73,7 @@ export class CvService {
         await this.cvRepository.delete(id);
     }
 
-    // async findById(id: number): Promise<myEntity> {
+    // async findById(id: number): Promise<Resume> {
     //     return await this.cvRepository.findOneBy({id});
     // }
 
@@ -96,7 +88,7 @@ export class CvService {
     }
     }
     
-    async restorecv(id:number): Promise<Partial<myEntity>>{
+    async restorecv(id:number): Promise<Partial<Resume>>{
         const cv = await this.cvRepository.recover({id});
         if (!cv.name) {
             throw new NotFoundException(`le cv d'id ${id} n'existe pas`);
@@ -106,24 +98,21 @@ export class CvService {
     // CREATE A QUERYBUILDER
 //    async CvNumberByAge(maxAge, minAge =0) {
    async CvNumberByAge() {
-
-    try {
-        // CHERCHER LE NOMBRE DE CV PAR AGE 
-        const qb = this.cvRepository.createQueryBuilder('cv');
-        const result = await qb
-            .select("cv.age, COUNT(cv.id) as count")
-            // .where("cv.age > :minAge and cv.age < :maxAge")
-            // .setParameters({minAge, maxAge})
-            .groupBy("cv.age")
-            .getRawMany();
-
-        return result;
-    } catch (error) {
-        // Handle errors here
-        console.error("Error fetching CV numbers by age:", error);
-        throw error; // You may want to handle or log the error accordingly
+        try {
+            // CHERCHER LE NOMBRE DE CV PAR AGE 
+            const qb = this.cvRepository.createQueryBuilder('cv');
+            const result = await qb
+                .select("cv.age, COUNT(cv.id) as count")
+                // .where("cv.age > :minAge and cv.age < :maxAge")
+                // .setParameters({minAge, maxAge})
+                .groupBy("cv.age")
+                .getRawMany();
+            return result;
+        } catch (error) {
+            // Handle errors here
+            console.error("Error fetching CV numbers by age:", error);
+            throw error; // You may want to handle or log the error accordingly
+        }
     }
-}
-
 }
 

@@ -9,8 +9,7 @@ export class userSubsribeDto{
 
     @IsNotEmpty()
     password:string;
+
     @IsOptional()
     role: string;
-
-
 }
